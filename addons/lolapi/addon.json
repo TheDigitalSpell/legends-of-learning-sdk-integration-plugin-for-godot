@@ -1,0 +1,11 @@
+{
+  "name": "Legends of Learning SDK Integration Plugin for Godot",
+  "version": "1.0.0",
+  "min_godot_version": "4.0",
+  "author": "The Digital Spell",
+  "website": "URL a tu GitHub",
+  "description": "The Legends of Learning SDK Integration Plugin for Godot 4 is the essential tool for connecting your game to the LoL platform. It automatically provides a global LoLApi Singleton, abstracting the complex JavaScript communication into simple Godot Signals and Methods. Easily handle save states, score reporting, and language changes to ensure your educational game runs smoothly and meets all platform requirements.",
+  "keywords": ["sdk", "wrapper", "javascript", "lol"],
+  "category": "Tools",
+  "license": "MIT"
+}
