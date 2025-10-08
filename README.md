@@ -6,14 +6,19 @@ The **Legends of Learning SDK Integration Plugin for Godot** is an essential God
 
 It automatically provides a global **Singleton** called **`LoLApi`** which handles all low-level `JavaScriptBridge` messaging, allowing you to focus on game development.
 
+
+
 -----
 
 ## 🚀 Installation
 
-1.  **Install Plugin:** Download or install the asset. Copy the `addons/lolapi` folder into the `addons/` directory of your Godot 4 project.
-2.  **Enable Plugin:** Go to **Project \> Project Settings \> Plugins** and check the status of the **Legends of Learning SDK Integration Plugin** is set to **Enable**.
-3.  **Export Feature:** For export targeting the LoL platform, go to **Project \> Export \> HTML5 (LoL)** and add `LoLApi` feature in your export preset.
-4.  **Translation Requirement (Crucial) 🌐:** The plugin relies on the **`TranslationsLoader`** utility class to manage in-game language changes requested by the LoL platform. This utility interacts with Godot's **`TranslationServer`**. You **must** have a primary translation file named **`translations.json`** located in the **root** of your project (`res://translations.json`). This file is required for the `TranslationsLoader.load_translations()` function to properly initialize Godot's translation system before the SDK sends a language change.
+1.  **Install Plugin:** Download legends-of-learning-sdk-5.4-integration-plugin-for-godot-4.4-vMAJOR.MINOR.PATCH.zip from [GitHub Releases](https://github.com/TheDigitalSpell/legends-of-learning-sdk-integration-plugin-for-godot/releases) or Godot Asset Library. Unzip and copy the `addons/lolapi` folder into the `addons/` directory of your Godot 4 project.
+2.  **Enable Plugin:** Go to **Project \> Project Settings \> Plugins** and check the status of the **Legends of Learning SDK Integration Plugin for Godot** is set to **Enable**.
+3.  **Export Feature:** For export targeting the LoL platform, go to **Project \> Export \>** and create a new export preset (e.g. **HTML5 - LoLApi**) and add `LoLApi` to the feature list.
+4.  **Translation Requirement (Crucial) 🌐:** The plugin relies on the **`TranslationsLoader`** utility class to manage in-game language changes requested by the LoL platform. This utility interacts with Godot's **`TranslationServer`**. You **must** have a primary translation file named **`translations.json`** located in the **root** of your project (`res://translations.json`). This file is required to properly initialize Godot's translation system before the SDK sends a language change.
+5. **Optimization for LoL Platform (Mandatory) 📦:** To publish games on LoL using Godot 4, you **must reduce the final build size**. LoL requires a stripped-down HTML export template to meet their size requirements.
+      * **Optimization Guide:** [Optimizing Godot Builds for HTML5/LoL](https://thedigitalspell.com/optimizing-godot-builds/)
+      * **Optimization Tool:** [godot-lol-web-build-template-builder](https://github.com/ChocolatePinecone/godot-lol-web-build-template-builder)
 
 ## 🔌 Core Usage
 
@@ -22,17 +27,17 @@ The wrapper uses the standard Godot **Signals** and **Methods** pattern.
   * **Signals:** For **incoming** messages from the LoL SDK to your game (e.g., "Pause," "Load Data").
   * **Methods:** For **outgoing** messages from your game to LoL SDK (e.g., "Save Data," "Complete Game").
 
-The **`LoLApi`** Singleton is available globally; you don't need to load it manually.
+The **`LoLApi`** Singleton is available globally.
 
 ### Step 1: Initialize Communication
 
-In your main game script (e.g., `World.gd` or `GameManager.gd`), use the `OS.has_feature()` check to ensure the LoLApi is only initialized when running in the required web environment.
+In your main game script, use the `OS.has_feature()` check to ensure the LoLApi is only initialized when running in the required web environment.
 
 ```gdscript
 func _ready():
     # ... your game initialization logic ...
 
-    # Godot 4: Check for the HTML5 feature which indicates LoL web environment
+    # Godot 4: Check for the HTML5 LoLApi feature
     if OS.has_feature("LoLApi"): 
         # Start the communication handshake
         _init_LoL()
@@ -49,33 +54,15 @@ func _on_savedata_loaded():
 The `_init_LoL` method is the key starting point. Use its callback to request save data, and finally, notify the SDK that your game is fully ready.
 
 ```gdscript
-func _on_LoL_init_message_received(_payload: Dictionary):
-    # Send the START message (as per your implementation)
-    LoLApi.send_start_message() 
-
-func _on_LoL_start_message_received(payload: Dictionary):
-    # The platform has provided settings/language. Now request save data.
-    LoLApi.send_saves_request_message()
-    
-func _on_LoL_load_state_message_received(payload: Dictionary):
-    # 1. Use the payload.data to load the game state.
-    # SaveData.load_game(payload.data)
-    
-    # 2. Once your game is fully initialized and loaded, 
-    # send the final ready signal.
-    LoLApi.send_ready_message()
-#region LOL
+#region LoL
 func _init_LoL():
-	_set_LoL_connection()
-	LolApi.send_init_message()
-
-func _set_LoL_connection():
 	LolApi.init_message_received.connect(_on_LoL_init_message_received)
 	LolApi.start_message_received.connect(_on_LoL_start_message_received)
 	LolApi.translation_message_received.connect(_on_LoL_translation_message_received)
-	LolApi.load_state_message_received.connect(_on_LoL_load_state_message_received)
-	LolApi.save_state_result_message_received.connect(_on_LoL_save_state_result_message_received)
+	LolApi.load_state_message_received.connect(_on_LoL_load_state_message_received)	  LolApi.save_state_result_message_received.connect(_on_LoL_save_state_result_message_received)
 	# ... See demo script for more examples
+	
+	LolApi.send_init_message()
 
 func _on_LoL_init_message_received(_payload: Dictionary):
 	LolApi.send_start_message()
@@ -114,3 +101,11 @@ Use these methods on the global `LoLApi` Singleton to communicate key game event
 | `LoLApi.send_complete_message()` | Notifies the platform that the game has finished. |
 | `LoLApi.send_text_to_speech_message(text, code)` | Sends text to be read aloud by the platform's Text-to-Speech service. |
 | `LoLApi.send_pause_message()` | Tells the platform that the game is pausing (less common, usually managed by the platform). |
+
+## 🙏 Acknowledgements and Origin
+
+This Godot 4 plugin is based on and continues the development of the original Godot 3 plugin.
+
+We are highly grateful to **ChocolatePinecone** for their foundational work and have their consent to continue and maintain this plugin for Godot 4.
+
+**Original Godot 3 Plugin:** [https://bitbucket.org/chocolatepinecone/godot-lol-libs](https://bitbucket.org/chocolatepinecone/godot-lol-libs)
