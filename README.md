@@ -1,5 +1,7 @@
 # Legends of Learning SDK Integration Plugin for Godot
 
+![Logo](icon.png)
+
 ## Overview
 
 The **Legends of Learning SDK Integration Plugin for Godot** is an essential Godot addon designed to simplify communication between your game and the Legends of Learning (LoL) platform environment.
