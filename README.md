@@ -152,7 +152,7 @@ When the game starts and you receive the saved data through the SDK's incoming s
 Upon loading the game, the platform does not automatically send the progress to the teacher. You must take the retrieved progress data and **manually resend it** so that the teacher's dashboard synchronizes with the loaded game.
 ```gdscript
 # Upon receiving the successful data load signal:
-LoLApi.send_progress_and_score_message(2, 9, 25) 
+LoLApi.send_progress(2, 9) 
 ```
 
 **In summary:** Use `send_progress_and_score_message` every time the student advances a significant fraction of the game, and use `send_save_state_message` to save the game file, making sure to re-send the progress to the teacher every time the student loads a saved game.
