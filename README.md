@@ -58,28 +58,29 @@ The `_init_LoL` method is the key starting point. Use its callback to request sa
 ```gdscript
 #region LoL
 func _init_LoL():
-	LolApi.init_message_received.connect(_on_LoL_init_message_received)
-	LolApi.start_message_received.connect(_on_LoL_start_message_received)
-	LolApi.translation_message_received.connect(_on_LoL_translation_message_received)
-	LolApi.load_state_message_received.connect(_on_LoL_load_state_message_received)	  LolApi.save_state_result_message_received.connect(_on_LoL_save_state_result_message_received)
+	LoLApi.init_message_received.connect(_on_LoL_init_message_received)
+	LoLApi.start_message_received.connect(_on_LoL_start_message_received)
+	LoLApi.translation_message_received.connect(_on_LoL_translation_message_received)
+	LoLApi.load_state_message_received.connect(_on_LoL_load_state_message_received)
+	LoLApi.save_state_result_message_received.connect(_on_LoL_save_state_result_message_received)
 	# ... See demo script for more examples
 	
-	LolApi.send_init_message()
+	LoLApi.send_init_message()
 
 func _on_LoL_init_message_received(_payload: Dictionary):
-	LolApi.send_start_message()
+	LoLApi.send_start_message()
 
 func _on_LoL_start_message_received(payload: Dictionary):
 	# '{"languageCode":"en","awkAutoSpeak":false,"awkMusicOn":false,"awkSfxOn":false}'}
-	LolApi.send_saves_request_message()
-	# Request saves and return LolApi.load_state_message_received with payload (_on_LoL_load_state_message_received)
+	LoLApi.send_saves_request_message()
+	# Request saves and return LoLApi.load_state_message_received with payload (_on_LoL_load_state_message_received)
 	
 func _on_LoL_load_state_message_received(payload: Dictionary):
 	if not payload.is_empty() and payload.has("data"):
 		# ... load_game with payload.data ...
 		if payload.has("currentProgress"):
 			# ... save payload.currentProgress in a local variable and send current progress to teacher...
-			LolApi.send_progress(SaveData.current_progress, SaveData.max_progress)
+			LoLApi.send_progress(SaveData.current_progress, SaveData.max_progress)
 	else:
 		# ... load_game with default data ...
 	await get_tree().process_frame
